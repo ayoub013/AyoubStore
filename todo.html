@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة المهام - To-Do List</title>
+    <style>
+        :root {
+            --primary: #25D366;
+            --primary-dark: #1ebc57;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray-bg: #f8fafc;
+            --card-border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gray-bg) 0%, #e0f2fe 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .todo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+        }
+
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 12px;
+            background-color: var(--gray-bg);
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .todos-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background-color: var(--gray-bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+            transition: all 0.2s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .todo-item:hover {
+            background-color: #f1f5f9;
+            transform: translateX(4px);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .todo-text {
+            flex: 1;
+            word-break: break-word;
+            transition: all 0.2s;
+        }
+
+        .todo-time {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--card-border);
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--card-border);
+            background-color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(37, 211, 102, 0.05);
+        }
+
+        .btn-action.danger:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        .btn-home {
+            background-color: var(--dark);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .btn-home:hover {
+            background-color: var(--primary);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="btn-home">← العودة للمتجر</a>
+
+        <header>
+            <h1>📝 قائمة مهامي</h1>
+            <p>نظم مهامك اليومية بسهولة</p>
+        </header>
+
+        <div class="todo-card">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="todoInput" 
+                    placeholder="أضف مهمة جديدة..."
+                    onkeypress="if(event.key === 'Enter') addTodo()"
+                >
+                <button class="btn-add" onclick="addTodo()">➕ إضافة</button>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">إجمالي المهام</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">مكتملة</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="pendingCount">0</div>
+                    <div class="stat-label">قيد الانتظار</div>
+                </div>
+            </div>
+
+            <div class="todos-list" id="todosList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">✨</div>
+                    <p>لا توجد مهام حالياً</p>
+                    <p style="font-size: 0.9rem;">ابدأ بإضافة مهمة جديدة</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-action" onclick="clearCompleted()">🗑️ حذف المكتملة</button>
+                <button class="btn-action danger" onclick="clearAll()">🧹 حذف الكل</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'ayoub_todos';
+
+        // تحميل المهام من Local Storage عند فتح الصفحة
+        window.addEventListener('load', () => {
+            loadTodos();
+            updateStats();
+        });
+
+        // إضافة مهمة جديدة
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                alert('الرجاء إدخال مهمة!');
+                return;
+            }
+
+            const todos = getTodos();
+            const newTodo = {
+                id: Date.now(),
+                text: text,
+                completed: false,
+                createdAt: new Date().toLocaleString('ar-MA')
+            };
+
+            todos.push(newTodo);
+            saveTodos(todos);
+            input.value = '';
+            loadTodos();
+            updateStats();
+        }
+
+        // حذف مهمة
+        function deleteTodo(id) {
+            if (confirm('هل تريد حذف هذه المهمة؟')) {
+                const todos = getTodos().filter(todo => todo.id !== id);
+                saveTodos(todos);
+                loadTodos();
+                updateStats();
+            }
+        }
+
+        // تحديث حالة المهمة
+        function toggleTodo(id) {
+            const todos = getTodos();
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos(todos);
+                loadTodos();
+                updateStats();
+            }
+        }
+
+        // حذف جميع المهام المكتملة
+        function clearCompleted() {
+            if (confirm('هل تريد حذف جميع المهام المكتملة؟')) {
+                const todos = getTodos().filter(todo => !todo.completed);
+                saveTodos(todos);
+                loadTodos();
+                updateStats();
+            }
+        }
+
+        // حذف جميع المهام
+        function clearAll() {
+            if (confirm('هل تريد حذف جميع المهام؟ لا يمكن التراجع!')) {
+                saveTodos([]);
+                loadTodos();
+                updateStats();
+            }
+        }
+
+        // الحصول على المهام من Local Storage
+        function getTodos() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // حفظ المهام في Local Storage
+        function saveTodos(todos) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+        }
+
+        // تحميل وعرض المهام
+        function loadTodos() {
+            const todos = getTodos();
+            const todosList = document.getElementById('todosList');
+
+            if (todos.length === 0) {
+                todosList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✨</div>
+                        <p>لا توجد مهام حالياً</p>
+                        <p style="font-size: 0.9rem;">ابدأ بإضافة مهمة جديدة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            todosList.innerHTML = todos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}">
+                    <input 
+                        type="checkbox" 
+                        class="checkbox"
+                        ${todo.completed ? 'checked' : ''}
+                        onchange="toggleTodo(${todo.id})"
+                    >
+                    <div style="flex: 1;">
+                        <div class="todo-text">${escapeHtml(todo.text)}</div>
+                        <div class="todo-time">${todo.createdAt}</div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTodo(${todo.id})">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        // تحديث الإحصائيات
+        function updateStats() {
+            const todos = getTodos();
+            const completed = todos.filter(t => t.completed).length;
+            const pending = todos.length - completed;
+
+            document.getElementById('totalCount').textContent = todos.length;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('pendingCount').textContent = pending;
+        }
+
+        // حماية من XSS
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
