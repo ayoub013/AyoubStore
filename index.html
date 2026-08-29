@@ -26,6 +26,161 @@
             opacity: 0 !important;
         }
 
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 16px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .top-bar-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h2 {
+            color: white;
+            font-size: 1.4rem;
+            flex: 1;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .lang-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid transparent;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background-color: white;
+            color: var(--primary);
+            border-color: white;
+        }
+
+        .lang-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-nav {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 998;
+            overflow-y: auto;
+        }
+
+        .side-nav.active {
+            transform: translateX(0);
+        }
+
+        .side-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--card-border);
+        }
+
+        .side-nav-header h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .close-nav {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 14px 16px;
+            background-color: var(--gray-bg);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            text-align: right;
+            font-size: 1rem;
+        }
+
+        .nav-link:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateX(-8px);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 997;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
         /* Header */
         header {
             background: #ffffff;
@@ -154,23 +309,63 @@
             margin-top: 10px;
         }
         .btn-submit:hover { background-color: var(--primary-dark); }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Top Bar with Language Switcher -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h2 id="storeName">متجري الإلكتروني</h2>
+            <div class="language-switcher">
+                <button class="lang-btn active" onclick="setLanguage('ar')">العربية</button>
+                <button class="lang-btn" onclick="setLanguage('en')">English</button>
+                <button class="lang-btn" onclick="setLanguage('fr')">Français</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <nav class="side-nav" id="sideNav">
+        <div class="side-nav-header">
+            <h3 id="navTitle">القائمة</h3>
+            <button class="close-nav" onclick="toggleSidebar()">✕</button>
+        </div>
+        <div class="nav-links">
+            <a class="nav-link" onclick="scrollToSection('products'); toggleSidebar()">
+                <span id="navProducts">🏪 المنتجات</span>
+            </a>
+            <a class="nav-link" onclick="window.location.href='todo.html'">
+                <span id="navTodos">📝 قائمة المهام</span>
+            </a>
+            <a class="nav-link" onclick="scrollToSection('contact'); toggleSidebar()">
+                <span id="navContact">📞 اتصل بنا</span>
+            </a>
+            <a class="nav-link" onclick="scrollToSection('about'); toggleSidebar()">
+                <span id="navAbout">ℹ️ عن المتجر</span>
+            </a>
+        </div>
+    </nav>
+
     <header>
-        <h1>متجري الإلكتروني</h1>
-        <p>اختر منتوجك واطلبه مباشرة عبر واتساب مع الدفع عند الاستلام</p>
+        <h1 id="headerTitle">متجري الإلكتروني</h1>
+        <p id="headerDesc">اختر منتوجك واطلبه مباشرة عبر واتساب مع الدفع عند الاستلام</p>
     </header>
 
     <div class="container">
-        <div class="products-grid">
+        <div class="products-grid" id="products">
 
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" alt="ساعة كلاسيكية">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" alt="ساعة">
                 <div class="product-info">
-                    <div class="product-title">ساعة يد أنيقة</div>
-                    <div class="product-desc">ساعة مقاومة للماء مع تصميم عصري مناسب لجميع المناسبات.</div>
+                    <div class="product-title" data-ar="ساعة يد أنيقة" data-en="Elegant Wristwatch" data-fr="Montre élégante">ساعة يد أنيقة</div>
+                    <div class="product-desc" data-ar="ساعة مقاومة للماء مع تصميم عصري مناسب لجميع المناسبات." data-en="Water-resistant watch with modern design suitable for all occasions." data-fr="Montre résistante à l'eau avec un design moderne adapté à toutes les occasions.">ساعة مقاومة للماء مع تصميم عصري مناسب لجميع المناسبات.</div>
                     <div class="product-bottom">
                         <div class="product-price">199 درهم</div>
                         <button class="btn-order" onclick="openOrderModal('ساعة يد أنيقة', '199 درهم')">أطلب الآن</button>
@@ -179,10 +374,10 @@
             </div>
 
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" alt="سماعات بلوتوث">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" alt="سماعات">
                 <div class="product-info">
-                    <div class="product-title">سماعات بلوتوث لاسلكية</div>
-                    <div class="product-desc">صوت عالي الدقة مع عزل الضوضاء وبطارية تدوم طويلاً.</div>
+                    <div class="product-title" data-ar="سماعات بلوتوث لاسلكية" data-en="Wireless Bluetooth Headphones" data-fr="Casque Bluetooth sans fil">سماعات بلوتوث لاسلكية</div>
+                    <div class="product-desc" data-ar="صوت عالي الدقة مع عزل الضوضاء وبطارية تدوم طويلاً." data-en="High-quality sound with noise cancellation and long battery life." data-fr="Son haute qualité avec suppression du bruit et autonomie prolongée.">صوت عالي الدقة مع عزل الضوضاء وبطارية تدوم طويلاً.</div>
                     <div class="product-bottom">
                         <div class="product-price">149 درهم</div>
                         <button class="btn-order" onclick="openOrderModal('سماعات بلوتوث لاسلكية', '149 درهم')">أطلب الآن</button>
@@ -193,8 +388,8 @@
             <div class="product-card">
                 <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&q=80" alt="ساعة ذكية">
                 <div class="product-info">
-                    <div class="product-title">ساعة ذكية Smartwatch</div>
-                    <div class="product-desc">تتبع الأنشطة الرياضية وقياس نبضات القلب مع شاشة لمس.</div>
+                    <div class="product-title" data-ar="ساعة ذكية Smartwatch" data-en="Smartwatch" data-fr="Montre intelligente">ساعة ذكية Smartwatch</div>
+                    <div class="product-desc" data-ar="تتبع الأنشطة الرياضية وقياس نبضات القلب مع شاشة لمس." data-en="Track sports activities and monitor heart rate with touchscreen." data-fr="Suivi des activités sportives et surveillance du rythme cardiaque avec écran tactile.">تتبع الأنشطة الرياضية وقياس نبضات القلب مع شاشة لمس.</div>
                     <div class="product-bottom">
                         <div class="product-price">249 درهم</div>
                         <button class="btn-order" onclick="openOrderModal('ساعة ذكية Smartwatch', '249 درهم')">أطلب الآن</button>
@@ -203,10 +398,10 @@
             </div>
 
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80" alt="نظارات شمسية">
+                <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80" alt="نظارات">
                 <div class="product-info">
-                    <div class="product-title">نظارات شمسية بريميوم</div>
-                    <div class="product-desc">حماية كاملة من الأشعة فوق البنفسجية وتصميم راقي.</div>
+                    <div class="product-title" data-ar="نظارات شمسية بريميوم" data-en="Premium Sunglasses" data-fr="Lunettes de soleil premium">نظارات شمسية بريميوم</div>
+                    <div class="product-desc" data-ar="حماية كاملة من الأشعة فوق البنفسجية وتصميم راقي." data-en="Complete UV protection with elegant design." data-fr="Protection UV complète avec un design élégant.">حماية كاملة من الأشعة فوق البنفسجية وتصميم راقي.</div>
                     <div class="product-bottom">
                         <div class="product-price">120 درهم</div>
                         <button class="btn-order" onclick="openOrderModal('نظارات شمسية بريميوم', '120 درهم')">أطلب الآن</button>
@@ -227,18 +422,18 @@
             
             <form id="modalForm" onsubmit="handleFormSubmit(event)">
                 <div class="form-group">
-                    <label>الاسم الكامل:</label>
+                    <label id="labelName">الاسم الكامل:</label>
                     <input type="text" id="custName" placeholder="الاسم والنسب" required>
                 </div>
                 <div class="form-group">
-                    <label>رقم الهاتف:</label>
+                    <label id="labelPhone">رقم الهاتف:</label>
                     <input type="tel" id="custPhone" placeholder="06XXXXXXXX" required>
                 </div>
                 <div class="form-group">
-                    <label>المدينة والعنوان:</label>
+                    <label id="labelAddress">المدينة والعنوان:</label>
                     <textarea id="custAddress" rows="2" placeholder="المدينة، الحي أو العنوان الكامل" required></textarea>
                 </div>
-                <button type="submit" class="btn-submit">تأكيد وإرسال الطلب عبر واتساب</button>
+                <button type="submit" class="btn-submit" id="btnSubmit">تأكيد وإرسال الطلب عبر واتساب</button>
             </form>
         </div>
     </div>
@@ -247,6 +442,109 @@
         const myPhoneNumber = "212621344556";
         let selectedProduct = "";
         let selectedPrice = "";
+        let currentLanguage = 'ar';
+
+        const translations = {
+            ar: {
+                storeName: "متجري الإلكتروني",
+                headerDesc: "اختر منتوجك واطلبه مباشرة عبر واتساب مع الدفع عند الاستلام",
+                navTitle: "القائمة",
+                navProducts: "🏪 المنتجات",
+                navTodos: "📝 قائمة المهام",
+                navContact: "📞 اتصل بنا",
+                navAbout: "ℹ️ عن المتجر",
+                labelName: "الاسم الكامل:",
+                labelPhone: "رقم الهاتف:",
+                labelAddress: "المدينة والعنوان:",
+                btnSubmit: "تأكيد وإرسال الطلب عبر واتساب",
+                orderConfirm: "سلام عليكم، بغيت نطلب هاد المنتوج"
+            },
+            en: {
+                storeName: "My Online Store",
+                headerDesc: "Choose your product and order it directly via WhatsApp with cash on delivery",
+                navTitle: "Menu",
+                navProducts: "🏪 Products",
+                navTodos: "📝 To-Do List",
+                navContact: "📞 Contact Us",
+                navAbout: "ℹ️ About Store",
+                labelName: "Full Name:",
+                labelPhone: "Phone Number:",
+                labelAddress: "City and Address:",
+                btnSubmit: "Confirm and Send Order via WhatsApp",
+                orderConfirm: "Hello, I want to order this product"
+            },
+            fr: {
+                storeName: "Ma Boutique en Ligne",
+                headerDesc: "Choisissez votre produit et commandez-le directement via WhatsApp avec paiement à la livraison",
+                navTitle: "Menu",
+                navProducts: "🏪 Produits",
+                navTodos: "📝 Liste des tâches",
+                navContact: "📞 Nous contacter",
+                navAbout: "ℹ️ À propos du magasin",
+                labelName: "Nom complet:",
+                labelPhone: "Numéro de téléphone:",
+                labelAddress: "Ville et adresse:",
+                btnSubmit: "Confirmer et envoyer la commande via WhatsApp",
+                orderConfirm: "Bonjour, je veux commander ce produit"
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // تحديث أزرار اللغة
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // تحديث الاتجاه
+            if (lang === 'ar') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else if (lang === 'en') {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'en';
+            } else if (lang === 'fr') {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = 'fr';
+            }
+
+            // تحديث النصوص
+            document.getElementById('storeName').textContent = translations[lang].storeName;
+            document.getElementById('headerTitle').textContent = translations[lang].storeName;
+            document.getElementById('headerDesc').textContent = translations[lang].headerDesc;
+            document.getElementById('navTitle').textContent = translations[lang].navTitle;
+            document.getElementById('navProducts').textContent = translations[lang].navProducts;
+            document.getElementById('navTodos').textContent = translations[lang].navTodos;
+            document.getElementById('navContact').textContent = translations[lang].navContact;
+            document.getElementById('navAbout').textContent = translations[lang].navAbout;
+            document.getElementById('labelName').textContent = translations[lang].labelName;
+            document.getElementById('labelPhone').textContent = translations[lang].labelPhone;
+            document.getElementById('labelAddress').textContent = translations[lang].labelAddress;
+            document.getElementById('btnSubmit').textContent = translations[lang].btnSubmit;
+
+            // تحديث وصف المنتجات
+            updateProductDescriptions(lang);
+        }
+
+        function updateProductDescriptions(lang) {
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sideNav').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        function scrollToSection(section) {
+            const element = document.getElementById(section);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
 
         function openOrderModal(name, price) {
             selectedProduct = name;
@@ -268,13 +566,14 @@
 
             if (!name || !phone || !address) return;
 
-            const message = `سلام عليكم، بغيت نطلب هاد المنتوج:%0A%0A` +
-                            `*المنتوج:* ${selectedProduct}%0A` +
-                            `*الثمن:* ${selectedPrice}%0A%0A` +
-                            `*معلومات المشتري:*%0A` +
-                            `• *الاسم:* ${name}%0A` +
-                            `• *الهاتف:* ${phone}%0A` +
-                            `• *العنوان:* ${address}`;
+            const orderConfirm = translations[currentLanguage].orderConfirm;
+            const message = `${orderConfirm}:%0A%0A` +
+                            `*Product/المنتوج:* ${selectedProduct}%0A` +
+                            `*Price/السعر:* ${selectedPrice}%0A%0A` +
+                            `*Buyer Info/معلومات المشتري:*%0A` +
+                            `• *Name/الاسم:* ${name}%0A` +
+                            `• *Phone/الهاتف:* ${phone}%0A` +
+                            `• *Address/العنوان:* ${address}`;
 
             window.open(`https://wa.me/${myPhoneNumber}?text=${message}`, '_blank');
             closeOrderModal();
