@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجري الإلكتروني</title>
+    <style>
+        :root {
+            --primary: #25D366;
+            --primary-dark: #1ebc57;
+            --dark: #1e293b;
+            --gray-bg: #f8fafc;
+            --card-border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--gray-bg); color: var(--dark); padding-bottom: 40px; }
+
+        /* إخفاء أي بادج أو شعار خارجي للمنصة */
+        .netlify-badge,
+        [class*="badge"],
+        [id*="badge"],
+        [class*="netlify"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        /* Header */
+        header {
+            background: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        header h1 { font-size: 1.6rem; color: var(--dark); }
+        header p { color: #64748b; font-size: 0.95rem; margin-top: 5px; }
+
+        /* Container & Products Grid */
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+        .product-info { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 6px; }
+        .product-desc { font-size: 0.85rem; color: #64748b; margin-bottom: 12px; flex-grow: 1; }
+        .product-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .product-price { font-size: 1.2rem; font-weight: bold; color: var(--primary-dark); }
+        
+        .btn-order {
+            background-color: var(--dark);
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-order:hover { background-color: var(--primary-dark); }
+
+        /* Modal Popup */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            position: relative;
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+        .modal-header { margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+        .modal-title { font-size: 1.1rem; color: var(--dark); }
+        .modal-price { color: var(--primary-dark); font-weight: bold; font-size: 1.1rem; margin-top: 4px; }
+
+        /* Form Controls & Options */
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            background-color: #fff;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background-color: var(--primary-dark); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>متجري الإلكتروني</h1>
+        <p>اختر منتوجك واطلبه مباشرة عبر واتساب مع الدفع عند الاستلام</p>
+    </header>
+
+    <div class="container">
+        <div class="products-grid">
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" alt="ساعة كلاسيكية">
+                <div class="product-info">
+                    <div class="product-title">ساعة يد أنيقة</div>
+                    <div class="product-desc">ساعة مقاومة للماء مع تصميم عصري مناسب لجميع المناسبات.</div>
+                    <div class="product-bottom">
+                        <div class="product-price">199 درهم</div>
+                        <button class="btn-order" onclick="openOrderModal('ساعة يد أنيقة', '199 درهم')">أطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" alt="سماعات بلوتوث">
+                <div class="product-info">
+                    <div class="product-title">سماعات بلوتوث لاسلكية</div>
+                    <div class="product-desc">صوت عالي الدقة مع عزل الضوضاء وبطارية تدوم طويلاً.</div>
+                    <div class="product-bottom">
+                        <div class="product-price">149 درهم</div>
+                        <button class="btn-order" onclick="openOrderModal('سماعات بلوتوث لاسلكية', '149 درهم')">أطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=500&q=80" alt="ساعة ذكية">
+                <div class="product-info">
+                    <div class="product-title">ساعة ذكية Smartwatch</div>
+                    <div class="product-desc">تتبع الأنشطة الرياضية وقياس نبضات القلب مع شاشة لمس.</div>
+                    <div class="product-bottom">
+                        <div class="product-price">249 درهم</div>
+                        <button class="btn-order" onclick="openOrderModal('ساعة ذكية Smartwatch', '249 درهم')">أطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80" alt="نظارات شمسية">
+                <div class="product-info">
+                    <div class="product-title">نظارات شمسية بريميوم</div>
+                    <div class="product-desc">حماية كاملة من الأشعة فوق البنفسجية وتصميم راقي.</div>
+                    <div class="product-bottom">
+                        <div class="product-price">120 درهم</div>
+                        <button class="btn-order" onclick="openOrderModal('نظارات شمسية بريميوم', '120 درهم')">أطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalProductTitle">اسم المنتوج</h3>
+                <div class="modal-price" id="modalProductPrice">0 درهم</div>
+            </div>
+            
+            <form id="modalForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label>الاسم الكامل:</label>
+                    <input type="text" id="custName" placeholder="الاسم والنسب" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف:</label>
+                    <input type="tel" id="custPhone" placeholder="06XXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>المدينة والعنوان:</label>
+                    <textarea id="custAddress" rows="2" placeholder="المدينة، الحي أو العنوان الكامل" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">تأكيد وإرسال الطلب عبر واتساب</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const myPhoneNumber = "212621344556";
+        let selectedProduct = "";
+        let selectedPrice = "";
+
+        function openOrderModal(name, price) {
+            selectedProduct = name;
+            selectedPrice = price;
+            document.getElementById('modalProductTitle').innerText = name;
+            document.getElementById('modalProductPrice').innerText = price;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+
+            if (!name || !phone || !address) return;
+
+            const message = `سلام عليكم، بغيت نطلب هاد المنتوج:%0A%0A` +
+                            `*المنتوج:* ${selectedProduct}%0A` +
+                            `*الثمن:* ${selectedPrice}%0A%0A` +
+                            `*معلومات المشتري:*%0A` +
+                            `• *الاسم:* ${name}%0A` +
+                            `• *الهاتف:* ${phone}%0A` +
+                            `• *العنوان:* ${address}`;
+
+            window.open(`https://wa.me/${myPhoneNumber}?text=${message}`, '_blank');
+            closeOrderModal();
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target === modal) {
+                closeOrderModal();
+            }
+        }
+    </script>
+</body>
+</html>
