@@ -54,13 +54,25 @@
             gap: 15px;
         }
 
-        .menu-toggle, .theme-toggle {
+        .menu-toggle, .theme-toggle, .admin-btn {
             background: none;
             border: none;
             color: white;
             font-size: 1.6rem;
             cursor: pointer;
             transition: all 0.2s;
+        }
+
+        .admin-btn {
+            font-size: 1rem;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .menu-toggle:hover, .theme-toggle:hover {
@@ -546,6 +558,12 @@
             font-weight: bold;
             margin-bottom: 8px;
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
@@ -556,6 +574,7 @@
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
             <h2 id="storeName">JOTIA STORE</h2>
             <button class="theme-toggle" onclick="toggleDarkMode()">🌙</button>
+            <a href="admin.html" class="admin-btn">⚙️ Admin</a>
             <div class="language-switcher">
                 <button class="lang-btn active" onclick="setLanguage('ar')">العربية</button>
                 <button class="lang-btn" onclick="setLanguage('en')">EN</button>
@@ -639,44 +658,10 @@
 
     <script>
         const myPhoneNumber = "212621344556";
+        const STORAGE_KEY = 'jotia_products'; // نفس المفتاح في Admin
         let currentLanguage = 'ar';
         let selectedProduct = "";
         let selectedPrice = "";
-
-        // منتجات البرا والملابس القديمة
-        const products = [
-            // اقمصة
-            { id: 1, name_ar: "قميص قطني قديم رمادي", name_en: "Old Gray Cotton Shirt", name_fr: "Vieux t-shirt en coton gris", desc_ar: "قميص كلاسيكي من السبعينات", price: 25, category: "قمصان", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
-            { id: 2, name_ar: "قميص أزرق قديم", name_en: "Old Blue Shirt", name_fr: "Vieux chemise bleue", desc_ar: "قميص أزرق داكن عتيق", price: 30, category: "قمصان", img: "https://images.unsplash.com/photo-1596401694722-404ffe54b37f?w=500&q=80" },
-            { id: 3, name_ar: "قميص برتقالي قديم", name_en: "Old Orange Shirt", name_fr: "Vieux t-shirt orange", desc_ar: "قميص برتقالي نادر", price: 28, category: "قمصان", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80" },
-            { id: 4, name_ar: "قميص أبيض كلاسيكي", name_en: "Classic White Shirt", name_fr: "T-shirt blanc classique", desc_ar: "قميص أبيض بسيط", price: 20, category: "قمصان", img: "https://images.unsplash.com/photo-1521965161318-94e6f1d2b435?w=500&q=80" },
-            { id: 5, name_ar: "قميص أسود قديم", name_en: "Old Black Shirt", name_fr: "Vieux t-shirt noir", desc_ar: "قميص أسود عتيق", price: 25, category: "قمصان", img: "https://images.unsplash.com/photo-1503342217505-b79219b2ce7b?w=500&q=80" },
-            { id: 6, name_ar: "قميص بألوان قديم", name_en: "Old Colorful Shirt", name_fr: "Vieux chemise colorée", desc_ar: "قميص بألوان زاهية", price: 32, category: "قمصان", img: "https://images.unsplash.com/photo-1618798250427-b89bbc6dda55?w=500&q=80" },
-            { id: 7, name_ar: "قميص مخطط قديم", name_en: "Old Striped Shirt", name_fr: "Vieux chemise rayée", desc_ar: "قميص مخطط كلاسيكي", price: 27, category: "قمصان", img: "https://images.unsplash.com/photo-1611032215715-26446bd4ff49?w=500&q=80" },
-            { id: 8, name_ar: "قميص نقشة قديم", name_en: "Old Patterned Shirt", name_fr: "Vieux chemise à motifs", desc_ar: "قميص برسومات قديمة", price: 30, category: "قمصان", img: "https://images.unsplash.com/photo-1506085281513-e1b1267e7f92?w=500&q=80" },
-
-            // سواعيد
-            { id: 9, name_ar: "ساعة يد قديمة ذهبية", name_en: "Old Gold Watch", name_fr: "Vieille montre dorée", desc_ar: "ساعة ذهبية عتيقة", price: 50, category: "سواعيد", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" },
-            { id: 10, name_ar: "ساعة يد فضية قديمة", name_en: "Old Silver Watch", name_fr: "Vieille montre argentée", desc_ar: "ساعة فضية عتيقة", price: 55, category: "سواعيد", img: "https://images.unsplash.com/photo-1548690596-f3a4d89b61ba?w=500&q=80" },
-            { id: 11, name_ar: "ساعة يد جلد قديمة", name_en: "Old Leather Watch", name_fr: "Vieille montre en cuir", desc_ar: "ساعة جلد عتيقة", price: 60, category: "سواعيد", img: "https://images.unsplash.com/photo-1579820220770-cb8aea20d4fe?w=500&q=80" },
-            { id: 12, name_ar: "ساعة يد رياضية قديمة", name_en: "Old Sports Watch", name_fr: "Vieille montre de sport", desc_ar: "ساعة رياضية عتيقة", price: 45, category: "سواعيد", img: "https://images.unsplash.com/photo-1569495282054-11f579f7e98d?w=500&q=80" },
-
-            // حذايا
-            { id: 13, name_ar: "حذاء رياضي قديم", name_en: "Old Sports Shoes", name_fr: "Vieilles chaussures de sport", desc_ar: "حذاء رياضي عتيق", price: 35, category: "حذايا", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" },
-            { id: 14, name_ar: "حذاء كاجوال قديم", name_en: "Old Casual Shoes", name_fr: "Vieilles chaussures décontractées", desc_ar: "حذاء كاجوال عتيق", price: 40, category: "حذايا", img: "https://images.unsplash.com/photo-1525966222134-fceb466e6023?w=500&q=80" },
-            { id: 15, name_ar: "حذاء بوتس قديم", name_en: "Old Boots", name_fr: "Vieilles bottes", desc_ar: "حذاء بوتس عتيق", price: 50, category: "حذايا", img: "https://images.unsplash.com/photo-1543163521-9145f2c6d384?w=500&q=80" },
-
-            // إكسسوارات
-            { id: 16, name_ar: "حقيبة جلد قديمة", name_en: "Old Leather Bag", name_fr: "Vieux sac en cuir", desc_ar: "حقيبة جلد عتيقة", price: 60, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
-            { id: 17, name_ar: "حزام جلد قديم", name_en: "Old Leather Belt", name_fr: "Vieux ceinture en cuir", desc_ar: "حزام جلد عتيق", price: 25, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
-            { id: 18, name_ar: "نظارة شمسية قديمة", name_en: "Old Sunglasses", name_fr: "Vieilles lunettes de soleil", desc_ar: "نظارة شمسية عتيقة", price: 30, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80" },
-            { id: 19, name_ar: "قبعة قديمة", name_en: "Old Hat", name_fr: "Vieux chapeau", desc_ar: "قبعة عتيقة", price: 20, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1611457206331-923ad5054d5f?w=500&q=80" },
-
-            // بنطلونات
-            { id: 20, name_ar: "بنطلون جينز أزرق قديم", name_en: "Old Blue Jeans", name_fr: "Vieux jean bleu", desc_ar: "جينز أزرق عتيق", price: 35, category: "بنطلونات", img: "https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&q=80" },
-            { id: 21, name_ar: "بنطلون أسود قديم", name_en: "Old Black Pants", name_fr: "Vieux pantalon noir", desc_ar: "بنطلون أسود عتيق", price: 32, category: "بنطلونات", img: "https://images.unsplash.com/photo-1473100356510-8ceb1538802b?w=500&q=80" },
-            { id: 22, name_ar: "بنطلون كاكي قديم", name_en: "Old Khaki Pants", name_fr: "Vieux pantalon kaki", desc_ar: "بنطلون كاكي عتيق", price: 30, category: "بنطلونات", img: "https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&q=80" },
-        ];
 
         const translations = {
             ar: {
@@ -689,7 +674,8 @@
                 labelName: "الاسم الكامل:",
                 labelPhone: "رقم الهاتف:",
                 labelAddress: "المدينة:",
-                btnSubmit: "أرسل عبر واتساب"
+                btnSubmit: "أرسل عبر واتساب",
+                noProducts: "لا توجد منتجات حالياً"
             },
             en: {
                 storeName: "JOTIA STORE",
@@ -701,7 +687,8 @@
                 labelName: "Full Name:",
                 labelPhone: "Phone Number:",
                 labelAddress: "City:",
-                btnSubmit: "Send via WhatsApp"
+                btnSubmit: "Send via WhatsApp",
+                noProducts: "No products available"
             },
             fr: {
                 storeName: "JOTIA STORE",
@@ -713,9 +700,15 @@
                 labelName: "Nom complet:",
                 labelPhone: "Numéro de téléphone:",
                 labelAddress: "Ville:",
-                btnSubmit: "Envoyer via WhatsApp"
+                btnSubmit: "Envoyer via WhatsApp",
+                noProducts: "Aucun produit disponible"
             }
         };
+
+        function getProducts() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
 
         function setLanguage(lang) {
             currentLanguage = lang;
@@ -754,50 +747,60 @@
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        function displayProducts(productsToShow = products) {
-            const categories = ['قمصان', 'سواعيد', 'بنطلونات', 'حذايا', 'إكسسوارات'];
+        function displayProducts(productsToShow = null) {
+            const allProducts = getProducts();
+            const productsToDisplay = productsToShow || allProducts;
+            
+            const categories = [...new Set(allProducts.map(p => p.category))];
             const filterTags = document.getElementById('filterTags');
             
-            if (filterTags.children.length === 0) {
+            if (filterTags.children.length === 0 && categories.length > 0) {
                 filterTags.innerHTML = categories.map(cat => 
                     `<div class="filter-tag" onclick="filterByCategory('${cat}')">${cat}</div>`
                 ).join('');
             }
 
-            const productsHtml = productsToShow.map(p => {
-                const name = p[`name_${currentLanguage}`];
-                const desc = p[`desc_ar`]; // تبقى الوصفات بالعربية
+            const productsContainer = document.getElementById('products');
+
+            if (productsToDisplay.length === 0) {
+                productsContainer.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">${translations[currentLanguage].noProducts}</div>`;
+                return;
+            }
+
+            const productsHtml = productsToDisplay.map(p => {
                 return `
                     <div class="product-card">
                         <span class="badge">برا قديم</span>
-                        <img src="${p.img}" alt="${name}">
+                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/200x180?text=${p.name}'">
                         <div class="product-info">
                             <div class="product-category">${p.category}</div>
-                            <div class="product-title">${name}</div>
-                            <div class="product-desc">${desc}</div>
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-desc">${p.desc}</div>
                             <div class="product-bottom">
                                 <div class="product-price">${p.price}د</div>
-                                <button class="btn-order" onclick="openOrderModal('${name}', '${p.price}د')">اطلب</button>
+                                <button class="btn-order" onclick="openOrderModal('${p.name}', '${p.price}د')">اطلب</button>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('products').innerHTML = productsHtml;
+            productsContainer.innerHTML = productsHtml;
         }
 
         function filterProducts() {
             const search = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => 
-                p.name_ar.toLowerCase().includes(search) || 
-                p.name_en.toLowerCase().includes(search)
+            const allProducts = getProducts();
+            const filtered = allProducts.filter(p => 
+                p.name.toLowerCase().includes(search) || 
+                p.desc.toLowerCase().includes(search)
             );
             displayProducts(filtered);
         }
 
         function filterByCategory(category) {
-            const filtered = products.filter(p => p.category === category);
+            const allProducts = getProducts();
+            const filtered = allProducts.filter(p => p.category === category);
             displayProducts(filtered);
         }
 
