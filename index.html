@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JOTIA STORE - متجر الملابس القديمة</title>
+    <title>JOTIA STORE - سوق الملابس القديمة</title>
     <style>
         :root {
             --primary: #8B4513;
@@ -12,33 +12,64 @@
             --dark: #1e293b;
             --gray-bg: #f5efe1;
             --card-border: #d4c5b9;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-text: #e2e8f0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--gray-bg); color: var(--dark); padding-bottom: 40px; }
+        
+        body { 
+            background-color: var(--gray-bg); 
+            color: var(--dark); 
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
 
         /* Top Bar */
         .top-bar {
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             padding: 16px 20px;
-            text-align: center;
             box-shadow: 0 4px 12px rgba(139, 69, 19, 0.25);
             position: sticky;
             top: 0;
             z-index: 999;
         }
 
+        body.dark-mode .top-bar {
+            background: linear-gradient(135deg, #2d1810 0%, #5a3a1a 100%);
+        }
+
         .top-bar-content {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle, .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-toggle:hover, .theme-toggle:hover {
+            transform: scale(1.1);
         }
 
         .top-bar h2 {
             color: white;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             flex: 1;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
@@ -59,20 +90,20 @@
             border-radius: 16px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.3s;
         }
 
         .lang-btn.active {
             background-color: white;
             color: var(--primary);
-            border-color: white;
         }
 
         .lang-btn:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
 
+        /* Sidebar */
         .side-nav {
             position: fixed;
             right: 0;
@@ -88,6 +119,11 @@
             overflow-y: auto;
         }
 
+        body.dark-mode .side-nav {
+            background: var(--dark-card);
+            color: var(--dark-text);
+        }
+
         .side-nav.active {
             transform: translateX(0);
         }
@@ -99,6 +135,10 @@
             margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 2px solid var(--card-border);
+        }
+
+        body.dark-mode .side-nav-header {
+            border-bottom-color: #475569;
         }
 
         .side-nav-header h3 {
@@ -114,10 +154,8 @@
             color: var(--dark);
         }
 
-        .nav-links {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        body.dark-mode .close-nav {
+            color: var(--dark-text);
         }
 
         .nav-link {
@@ -133,6 +171,12 @@
             border: none;
             text-align: right;
             font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        body.dark-mode .nav-link {
+            background-color: #334155;
+            color: var(--dark-text);
         }
 
         .nav-link:hover {
@@ -156,19 +200,6 @@
             display: block;
         }
 
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.6rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.1);
-        }
-
         /* Header */
         header {
             background: linear-gradient(135deg, rgba(139, 69, 19, 0.95) 0%, rgba(210, 105, 30, 0.95) 100%);
@@ -179,10 +210,13 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             color: white;
         }
-        
+
+        body.dark-mode header {
+            background: linear-gradient(135deg, #2d1810 0%, #5a3a1a 100%);
+        }
+
         header h1 { 
             font-size: 2.2rem; 
-            color: #fff; 
             margin-bottom: 8px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
@@ -193,12 +227,96 @@
             font-weight: 500;
         }
 
+        /* Search Bar */
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 0 16px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: white;
+        }
+
+        body.dark-mode .search-input {
+            background-color: var(--dark-card);
+            border-color: #475569;
+            color: var(--dark-text);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .search-btn {
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: var(--accent);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .filter-tag {
+            padding: 8px 16px;
+            background-color: var(--gray-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .filter-tag {
+            background-color: #334155;
+            border-color: #475569;
+            color: var(--dark-text);
+        }
+
+        .filter-tag:hover, .filter-tag.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         /* Container & Products Grid */
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
-        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 16px; 
+        }
+
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
         }
 
@@ -212,71 +330,93 @@
             flex-direction: column;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        
+
+        body.dark-mode .product-card {
+            background: var(--dark-card);
+            border-color: #475569;
+        }
+
         .product-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 10px 20px rgba(139, 69, 19, 0.15);
             border-color: var(--accent);
         }
-        
+
         .product-card img {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
             background-color: var(--gray-bg);
         }
-        
+
         .product-info { 
-            padding: 16px; 
+            padding: 14px; 
             flex-grow: 1; 
             display: flex; 
             flex-direction: column; 
         }
-        
-        .product-title { 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            margin-bottom: 6px;
+
+        .product-category {
+            font-size: 0.75rem;
             color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
         }
-        
+
+        .product-title { 
+            font-size: 1rem; 
+            font-weight: bold; 
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        body.dark-mode .product-title {
+            color: var(--dark-text);
+        }
+
         .product-desc { 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             color: #64748b; 
-            margin-bottom: 12px; 
-            flex-grow: 1; 
+            margin-bottom: 8px; 
+            flex-grow: 1;
+            line-height: 1.3;
         }
-        
+
+        body.dark-mode .product-desc {
+            color: #94a3b8;
+        }
+
         .product-bottom { 
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            margin-top: 10px; 
+            margin-top: 8px;
         }
-        
+
         .product-price { 
-            font-size: 1.2rem; 
+            font-size: 1.1rem; 
             font-weight: bold; 
             color: var(--accent);
         }
-        
+
         .btn-order {
             background-color: var(--primary);
             color: #ffffff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: 0.2s;
         }
-        
+
         .btn-order:hover { 
             background-color: var(--accent);
         }
 
-        /* Modal Popup */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -288,7 +428,7 @@
             padding: 16px;
             z-index: 1000;
         }
-        
+
         .modal-content {
             background: #ffffff;
             width: 100%;
@@ -299,12 +439,17 @@
             position: relative;
             animation: fadeIn 0.25s ease-out;
         }
-        
+
+        body.dark-mode .modal-content {
+            background: var(--dark-card);
+            color: var(--dark-text);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        
+
         .close-btn {
             position: absolute;
             top: 16px;
@@ -315,19 +460,19 @@
             color: #94a3b8;
             cursor: pointer;
         }
-        
+
         .modal-header { 
             margin-bottom: 16px; 
             border-bottom: 2px solid var(--accent); 
             padding-bottom: 12px; 
         }
-        
+
         .modal-title { 
             font-size: 1.1rem; 
             color: var(--primary);
             font-weight: bold;
         }
-        
+
         .modal-price { 
             color: var(--accent); 
             font-weight: bold; 
@@ -335,9 +480,9 @@
             margin-top: 4px; 
         }
 
-        /* Form Controls */
+        /* Form */
         .form-group { margin-bottom: 14px; }
-        
+
         .form-group label { 
             display: block; 
             font-size: 0.85rem; 
@@ -345,8 +490,12 @@
             color: var(--primary); 
             margin-bottom: 6px; 
         }
-        
-        .form-group input, .form-group textarea, .form-group select {
+
+        body.dark-mode .form-group label {
+            color: var(--dark-text);
+        }
+
+        .form-group input, .form-group textarea {
             width: 100%;
             padding: 10px 12px;
             border: 2px solid var(--card-border);
@@ -355,9 +504,16 @@
             font-size: 0.95rem;
             transition: border-color 0.2s;
             background-color: #fff;
+            color: var(--dark);
         }
-        
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+
+        body.dark-mode .form-group input, body.dark-mode .form-group textarea {
+            background-color: #334155;
+            border-color: #475569;
+            color: var(--dark-text);
+        }
+
+        .form-group input:focus, .form-group textarea:focus { 
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
         }
@@ -375,23 +531,18 @@
             transition: 0.2s;
             margin-top: 10px;
         }
-        
+
         .btn-submit:hover { 
             background-color: var(--accent);
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Badge */
         .badge {
             display: inline-block;
             background-color: var(--accent);
             color: white;
             padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
             font-weight: bold;
             margin-bottom: 8px;
         }
@@ -399,27 +550,28 @@
 </head>
 <body>
 
-    <!-- Top Bar with Language Switcher -->
+    <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
             <h2 id="storeName">JOTIA STORE</h2>
+            <button class="theme-toggle" onclick="toggleDarkMode()">🌙</button>
             <div class="language-switcher">
                 <button class="lang-btn active" onclick="setLanguage('ar')">العربية</button>
-                <button class="lang-btn" onclick="setLanguage('en')">English</button>
-                <button class="lang-btn" onclick="setLanguage('fr')">Français</button>
+                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
             </div>
         </div>
     </div>
 
-    <!-- Sidebar Navigation -->
+    <!-- Sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <nav class="side-nav" id="sideNav">
         <div class="side-nav-header">
             <h3 id="navTitle">القائمة</h3>
             <button class="close-nav" onclick="toggleSidebar()">✕</button>
         </div>
-        <div class="nav-links">
+        <div>
             <a class="nav-link" onclick="scrollToSection('products'); toggleSidebar()">
                 <span id="navProducts">👕 الملابس</span>
             </a>
@@ -429,107 +581,36 @@
             <a class="nav-link" onclick="scrollToSection('contact'); toggleSidebar()">
                 <span id="navContact">📞 اتصل بنا</span>
             </a>
-            <a class="nav-link" onclick="scrollToSection('about'); toggleSidebar()">
-                <span id="navAbout">ℹ️ عن المتجر</span>
-            </a>
         </div>
     </nav>
 
+    <!-- Header -->
     <header>
         <h1 id="headerTitle">JOTIA STORE</h1>
-        <p id="headerDesc">ملابس قديمة وعتيقة بأسعار مخفضة | طلب مباشر عبر واتساب</p>
+        <p id="headerDesc">🏪 سوق الملابس والبرا القديمة - أسعار منخفضة جداً</p>
     </header>
 
-    <div class="container">
-        <div class="products-grid" id="products">
-
-            <!-- قميص قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" alt="قميص قديم">
-                <div class="product-info">
-                    <div class="product-title" data-ar="قميص قطني قديم" data-en="Vintage Cotton Shirt" data-fr="Chemise vintage en coton">قميص قطني قديم</div>
-                    <div class="product-desc" data-ar="قميص قطني أصلي بتصميم كلاسيكي من الثمانينات، حالة جيدة." data-en="Original cotton shirt with classic 80s design, good condition." data-fr="Chemise en coton original avec design classique des années 80, bon état.">قميص قطني أصلي بتصميم كلاسيكي من الثمانينات</div>
-                    <div class="product-bottom">
-                        <div class="product-price">80 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('قميص قطني قديم', '80 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- بنطلون جينز قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&q=80" alt="بنطلون جينز">
-                <div class="product-info">
-                    <div class="product-title" data-ar="بنطلون جينز قديم" data-en="Vintage Jeans" data-fr="Jean vintage">بنطلون جينز قديم</div>
-                    <div class="product-desc" data-ar="جينز أصلي أمريكي قديم، لون أزرق داكن، حالة ممتازة." data-en="Original vintage American jeans, dark blue color, excellent condition." data-fr="Jean américain vintage original, couleur bleu foncé, état excellent.">جينز أصلي أمريكي قديم، لون أزرق داكن</div>
-                    <div class="product-bottom">
-                        <div class="product-price">120 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('بنطلون جينز قديم', '120 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- فستان قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1595777712802-4e114016f826?w=500&q=80" alt="فستان">
-                <div class="product-info">
-                    <div class="product-title" data-ar="فستان قديم أنيق" data-en="Elegant Vintage Dress" data-fr="Robe vintage élégante">فستان قديم أنيق</div>
-                    <div class="product-desc" data-ar="فستان كلاسيكي من السبعينات، لون بيج فاتح، مناسب للمناسبات." data-en="Classic dress from 70s, light beige color, suitable for occasions." data-fr="Robe classique des années 70, couleur beige clair, adaptée aux occasions.">فستان كلاسيكي من السبعينات، لون بيج فاتح</div>
-                    <div class="product-bottom">
-                        <div class="product-price">150 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('فستان قديم أنيق', '150 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- جاكيت قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1551028719-00167b16ebc5?w=500&q=80" alt="جاكيت">
-                <div class="product-info">
-                    <div class="product-title" data-ar="جاكيت جلد قديم" data-en="Vintage Leather Jacket" data-fr="Veste en cuir vintage">جاكيت جلد قديم</div>
-                    <div class="product-desc" data-ar="جاكيت جلد أصلي من التسعينات، لون بني داكن، حالة جيدة جداً." data-en="Original leather jacket from 90s, dark brown, in very good condition." data-fr="Veste en cuir original des années 90, marron foncé, en très bon état.">جاكيت جلد أصلي من التسعينات، لون بني داكن</div>
-                    <div class="product-bottom">
-                        <div class="product-price">250 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('جاكيت جلد قديم', '250 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- تيشيرت قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80" alt="تيشيرت">
-                <div class="product-info">
-                    <div class="product-title" data-ar="تيشيرت عتيق" data-en="Vintage T-Shirt" data-fr="T-shirt vintage">تيشيرت عتيق</div>
-                    <div class="product-desc" data-ar="تيشيرت ماركة عالمية قديم، رسمة كلاسيكية، حالة ممتازة." data-en="Old brand t-shirt with classic graphic, excellent condition." data-fr="T-shirt de marque ancien avec graphique classique, état excellent.">تيشيرت ماركة عالمية قديم، رسمة كلاسيكية</div>
-                    <div class="product-bottom">
-                        <div class="product-price">50 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('تيشيرت عتيق', '50 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- حذاء قديم -->
-            <div class="product-card">
-                <div class="badge" id="badgeVintage">عتيق</div>
-                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" alt="حذاء">
-                <div class="product-info">
-                    <div class="product-title" data-ar="حذاء رياضي قديم" data-en="Vintage Sneakers" data-fr="Baskets vintage">حذاء رياضي قديم</div>
-                    <div class="product-desc" data-ar="حذاء رياضي ماركة عالمية من التسعينات، حالة جيدة جداً." data-en="Vintage brand sneakers from 90s, in very good condition." data-fr="Baskets de marque vintage des années 90, en très bon état.">حذاء رياضي ماركة عالمية من التسعينات</div>
-                    <div class="product-bottom">
-                        <div class="product-price">180 درهم</div>
-                        <button class="btn-order" onclick="openOrderModal('حذاء رياضي قديم', '180 درهم')">اطلب</button>
-                    </div>
-                </div>
-            </div>
-
+    <!-- Search & Filter -->
+    <div class="search-container">
+        <div class="search-box">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="ابحث عن منتوج..." 
+                onkeyup="filterProducts()"
+            >
+            <button class="search-btn" onclick="filterProducts()">🔍 بحث</button>
         </div>
+        <div class="filter-tags" id="filterTags"></div>
     </div>
 
+    <!-- Products -->
+    <div class="container">
+        <div class="products-grid" id="products"></div>
+    </div>
+
+    <!-- Modal -->
     <div class="modal" id="orderModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeOrderModal()">&times;</button>
@@ -541,94 +622,113 @@
             <form id="modalForm" onsubmit="handleFormSubmit(event)">
                 <div class="form-group">
                     <label id="labelName">الاسم الكامل:</label>
-                    <input type="text" id="custName" placeholder="الاسم والنسب" required>
+                    <input type="text" id="custName" required>
                 </div>
                 <div class="form-group">
                     <label id="labelPhone">رقم الهاتف:</label>
-                    <input type="tel" id="custPhone" placeholder="06XXXXXXXX" required>
+                    <input type="tel" id="custPhone" required>
                 </div>
                 <div class="form-group">
-                    <label id="labelAddress">المدينة والعنوان:</label>
-                    <textarea id="custAddress" rows="2" placeholder="المدينة، الحي أو العنوان الكامل" required></textarea>
+                    <label id="labelAddress">المدينة:</label>
+                    <input type="text" id="custAddress" required>
                 </div>
-                <button type="submit" class="btn-submit" id="btnSubmit">تأكيد وإرسال الطلب عبر واتساب</button>
+                <button type="submit" class="btn-submit" id="btnSubmit">أرسل عبر واتساب</button>
             </form>
         </div>
     </div>
 
     <script>
         const myPhoneNumber = "212621344556";
+        let currentLanguage = 'ar';
         let selectedProduct = "";
         let selectedPrice = "";
-        let currentLanguage = 'ar';
+
+        // منتجات البرا والملابس القديمة
+        const products = [
+            // اقمصة
+            { id: 1, name_ar: "قميص قطني قديم رمادي", name_en: "Old Gray Cotton Shirt", name_fr: "Vieux t-shirt en coton gris", desc_ar: "قميص كلاسيكي من السبعينات", price: 25, category: "قمصان", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
+            { id: 2, name_ar: "قميص أزرق قديم", name_en: "Old Blue Shirt", name_fr: "Vieux chemise bleue", desc_ar: "قميص أزرق داكن عتيق", price: 30, category: "قمصان", img: "https://images.unsplash.com/photo-1596401694722-404ffe54b37f?w=500&q=80" },
+            { id: 3, name_ar: "قميص برتقالي قديم", name_en: "Old Orange Shirt", name_fr: "Vieux t-shirt orange", desc_ar: "قميص برتقالي نادر", price: 28, category: "قمصان", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&q=80" },
+            { id: 4, name_ar: "قميص أبيض كلاسيكي", name_en: "Classic White Shirt", name_fr: "T-shirt blanc classique", desc_ar: "قميص أبيض بسيط", price: 20, category: "قمصان", img: "https://images.unsplash.com/photo-1521965161318-94e6f1d2b435?w=500&q=80" },
+            { id: 5, name_ar: "قميص أسود قديم", name_en: "Old Black Shirt", name_fr: "Vieux t-shirt noir", desc_ar: "قميص أسود عتيق", price: 25, category: "قمصان", img: "https://images.unsplash.com/photo-1503342217505-b79219b2ce7b?w=500&q=80" },
+            { id: 6, name_ar: "قميص بألوان قديم", name_en: "Old Colorful Shirt", name_fr: "Vieux chemise colorée", desc_ar: "قميص بألوان زاهية", price: 32, category: "قمصان", img: "https://images.unsplash.com/photo-1618798250427-b89bbc6dda55?w=500&q=80" },
+            { id: 7, name_ar: "قميص مخطط قديم", name_en: "Old Striped Shirt", name_fr: "Vieux chemise rayée", desc_ar: "قميص مخطط كلاسيكي", price: 27, category: "قمصان", img: "https://images.unsplash.com/photo-1611032215715-26446bd4ff49?w=500&q=80" },
+            { id: 8, name_ar: "قميص نقشة قديم", name_en: "Old Patterned Shirt", name_fr: "Vieux chemise à motifs", desc_ar: "قميص برسومات قديمة", price: 30, category: "قمصان", img: "https://images.unsplash.com/photo-1506085281513-e1b1267e7f92?w=500&q=80" },
+
+            // سواعيد
+            { id: 9, name_ar: "ساعة يد قديمة ذهبية", name_en: "Old Gold Watch", name_fr: "Vieille montre dorée", desc_ar: "ساعة ذهبية عتيقة", price: 50, category: "سواعيد", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80" },
+            { id: 10, name_ar: "ساعة يد فضية قديمة", name_en: "Old Silver Watch", name_fr: "Vieille montre argentée", desc_ar: "ساعة فضية عتيقة", price: 55, category: "سواعيد", img: "https://images.unsplash.com/photo-1548690596-f3a4d89b61ba?w=500&q=80" },
+            { id: 11, name_ar: "ساعة يد جلد قديمة", name_en: "Old Leather Watch", name_fr: "Vieille montre en cuir", desc_ar: "ساعة جلد عتيقة", price: 60, category: "سواعيد", img: "https://images.unsplash.com/photo-1579820220770-cb8aea20d4fe?w=500&q=80" },
+            { id: 12, name_ar: "ساعة يد رياضية قديمة", name_en: "Old Sports Watch", name_fr: "Vieille montre de sport", desc_ar: "ساعة رياضية عتيقة", price: 45, category: "سواعيد", img: "https://images.unsplash.com/photo-1569495282054-11f579f7e98d?w=500&q=80" },
+
+            // حذايا
+            { id: 13, name_ar: "حذاء رياضي قديم", name_en: "Old Sports Shoes", name_fr: "Vieilles chaussures de sport", desc_ar: "حذاء رياضي عتيق", price: 35, category: "حذايا", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" },
+            { id: 14, name_ar: "حذاء كاجوال قديم", name_en: "Old Casual Shoes", name_fr: "Vieilles chaussures décontractées", desc_ar: "حذاء كاجوال عتيق", price: 40, category: "حذايا", img: "https://images.unsplash.com/photo-1525966222134-fceb466e6023?w=500&q=80" },
+            { id: 15, name_ar: "حذاء بوتس قديم", name_en: "Old Boots", name_fr: "Vieilles bottes", desc_ar: "حذاء بوتس عتيق", price: 50, category: "حذايا", img: "https://images.unsplash.com/photo-1543163521-9145f2c6d384?w=500&q=80" },
+
+            // إكسسوارات
+            { id: 16, name_ar: "حقيبة جلد قديمة", name_en: "Old Leather Bag", name_fr: "Vieux sac en cuir", desc_ar: "حقيبة جلد عتيقة", price: 60, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
+            { id: 17, name_ar: "حزام جلد قديم", name_en: "Old Leather Belt", name_fr: "Vieux ceinture en cuir", desc_ar: "حزام جلد عتيق", price: 25, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" },
+            { id: 18, name_ar: "نظارة شمسية قديمة", name_en: "Old Sunglasses", name_fr: "Vieilles lunettes de soleil", desc_ar: "نظارة شمسية عتيقة", price: 30, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80" },
+            { id: 19, name_ar: "قبعة قديمة", name_en: "Old Hat", name_fr: "Vieux chapeau", desc_ar: "قبعة عتيقة", price: 20, category: "إكسسوارات", img: "https://images.unsplash.com/photo-1611457206331-923ad5054d5f?w=500&q=80" },
+
+            // بنطلونات
+            { id: 20, name_ar: "بنطلون جينز أزرق قديم", name_en: "Old Blue Jeans", name_fr: "Vieux jean bleu", desc_ar: "جينز أزرق عتيق", price: 35, category: "بنطلونات", img: "https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&q=80" },
+            { id: 21, name_ar: "بنطلون أسود قديم", name_en: "Old Black Pants", name_fr: "Vieux pantalon noir", desc_ar: "بنطلون أسود عتيق", price: 32, category: "بنطلونات", img: "https://images.unsplash.com/photo-1473100356510-8ceb1538802b?w=500&q=80" },
+            { id: 22, name_ar: "بنطلون كاكي قديم", name_en: "Old Khaki Pants", name_fr: "Vieux pantalon kaki", desc_ar: "بنطلون كاكي عتيق", price: 30, category: "بنطلونات", img: "https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&q=80" },
+        ];
 
         const translations = {
             ar: {
                 storeName: "JOTIA STORE",
-                headerDesc: "ملابس قديمة وعتيقة بأسعار مخفضة | طلب مباشر عبر واتساب",
+                headerDesc: "🏪 سوق الملابس والبرا القديمة - أسعار منخفضة جداً",
                 navTitle: "القائمة",
                 navProducts: "👕 الملابس",
                 navTodos: "📝 قائمة المهام",
                 navContact: "📞 اتصل بنا",
-                navAbout: "ℹ️ عن المتجر",
                 labelName: "الاسم الكامل:",
                 labelPhone: "رقم الهاتف:",
-                labelAddress: "المدينة والعنوان:",
-                btnSubmit: "تأكيد وإرسال الطلب عبر واتساب",
-                orderConfirm: "السلام عليكم، بغيت نطلب هاد الملابس القديمة"
+                labelAddress: "المدينة:",
+                btnSubmit: "أرسل عبر واتساب"
             },
             en: {
                 storeName: "JOTIA STORE",
-                headerDesc: "Vintage and antique clothes at discounted prices | Order directly via WhatsApp",
+                headerDesc: "🏪 Old Clothes & Vintage Market - Very Low Prices",
                 navTitle: "Menu",
                 navProducts: "👕 Clothes",
                 navTodos: "📝 To-Do List",
                 navContact: "📞 Contact Us",
-                navAbout: "ℹ️ About Store",
                 labelName: "Full Name:",
                 labelPhone: "Phone Number:",
-                labelAddress: "City and Address:",
-                btnSubmit: "Confirm and Send Order via WhatsApp",
-                orderConfirm: "Hello, I want to order these vintage clothes"
+                labelAddress: "City:",
+                btnSubmit: "Send via WhatsApp"
             },
             fr: {
                 storeName: "JOTIA STORE",
-                headerDesc: "Vêtements vintage et antiques à prix réduits | Commande directe via WhatsApp",
+                headerDesc: "🏪 Marché de vêtements vintage - Prix très bas",
                 navTitle: "Menu",
                 navProducts: "👕 Vêtements",
                 navTodos: "📝 Liste des tâches",
                 navContact: "📞 Nous contacter",
-                navAbout: "ℹ️ À propos du magasin",
                 labelName: "Nom complet:",
                 labelPhone: "Numéro de téléphone:",
-                labelAddress: "Ville et adresse:",
-                btnSubmit: "Confirmer et envoyer la commande via WhatsApp",
-                orderConfirm: "Bonjour, je veux commander ces vêtements vintage"
+                labelAddress: "Ville:",
+                btnSubmit: "Envoyer via WhatsApp"
             }
         };
 
         function setLanguage(lang) {
             currentLanguage = lang;
             
-            // تحديث أزرار اللغة
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            // تحديث الاتجاه
             if (lang === 'ar') {
                 document.documentElement.dir = 'rtl';
-                document.documentElement.lang = 'ar';
-            } else if (lang === 'en') {
+            } else {
                 document.documentElement.dir = 'ltr';
-                document.documentElement.lang = 'en';
-            } else if (lang === 'fr') {
-                document.documentElement.dir = 'ltr';
-                document.documentElement.lang = 'fr';
             }
 
-            // تحديث النصوص
             document.getElementById('storeName').textContent = translations[lang].storeName;
             document.getElementById('headerTitle').textContent = translations[lang].storeName;
             document.getElementById('headerDesc').textContent = translations[lang].headerDesc;
@@ -636,20 +736,17 @@
             document.getElementById('navProducts').textContent = translations[lang].navProducts;
             document.getElementById('navTodos').textContent = translations[lang].navTodos;
             document.getElementById('navContact').textContent = translations[lang].navContact;
-            document.getElementById('navAbout').textContent = translations[lang].navAbout;
             document.getElementById('labelName').textContent = translations[lang].labelName;
             document.getElementById('labelPhone').textContent = translations[lang].labelPhone;
             document.getElementById('labelAddress').textContent = translations[lang].labelAddress;
             document.getElementById('btnSubmit').textContent = translations[lang].btnSubmit;
 
-            // تحديث وصف المنتجات
-            updateProductDescriptions(lang);
+            displayProducts();
         }
 
-        function updateProductDescriptions(lang) {
-            document.querySelectorAll('[data-ar]').forEach(el => {
-                el.textContent = el.getAttribute(`data-${lang}`);
-            });
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
 
         function toggleSidebar() {
@@ -657,11 +754,51 @@
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        function scrollToSection(section) {
-            const element = document.getElementById(section);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
+        function displayProducts(productsToShow = products) {
+            const categories = ['قمصان', 'سواعيد', 'بنطلونات', 'حذايا', 'إكسسوارات'];
+            const filterTags = document.getElementById('filterTags');
+            
+            if (filterTags.children.length === 0) {
+                filterTags.innerHTML = categories.map(cat => 
+                    `<div class="filter-tag" onclick="filterByCategory('${cat}')">${cat}</div>`
+                ).join('');
             }
+
+            const productsHtml = productsToShow.map(p => {
+                const name = p[`name_${currentLanguage}`];
+                const desc = p[`desc_ar`]; // تبقى الوصفات بالعربية
+                return `
+                    <div class="product-card">
+                        <span class="badge">برا قديم</span>
+                        <img src="${p.img}" alt="${name}">
+                        <div class="product-info">
+                            <div class="product-category">${p.category}</div>
+                            <div class="product-title">${name}</div>
+                            <div class="product-desc">${desc}</div>
+                            <div class="product-bottom">
+                                <div class="product-price">${p.price}د</div>
+                                <button class="btn-order" onclick="openOrderModal('${name}', '${p.price}د')">اطلب</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('products').innerHTML = productsHtml;
+        }
+
+        function filterProducts() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.name_ar.toLowerCase().includes(search) || 
+                p.name_en.toLowerCase().includes(search)
+            );
+            displayProducts(filtered);
+        }
+
+        function filterByCategory(category) {
+            const filtered = products.filter(p => p.category === category);
+            displayProducts(filtered);
         }
 
         function openOrderModal(name, price) {
@@ -684,14 +821,7 @@
 
             if (!name || !phone || !address) return;
 
-            const orderConfirm = translations[currentLanguage].orderConfirm;
-            const message = `${orderConfirm}:%0A%0A` +
-                            `*Product/المنتوج:* ${selectedProduct}%0A` +
-                            `*Price/السعر:* ${selectedPrice}%0A%0A` +
-                            `*Buyer Info/معلومات المشتري:*%0A` +
-                            `• *Name/الاسم:* ${name}%0A` +
-                            `• *Phone/الهاتف:* ${phone}%0A` +
-                            `• *Address/العنوان:* ${address}`;
+            const message = `السلام عليكم، بغيت نطلب هاد المنتوج:%0A%0A*المنتوج:* ${selectedProduct}%0A*السعر:* ${selectedPrice}%0A%0A*الاسم:* ${name}%0A*الهاتف:* ${phone}%0A*المدينة:* ${address}`;
 
             window.open(`https://wa.me/${myPhoneNumber}?text=${message}`, '_blank');
             closeOrderModal();
@@ -703,6 +833,14 @@
                 closeOrderModal();
             }
         }
+
+        // تحميل الوضع المظلم المحفوظ
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+            displayProducts();
+        });
     </script>
 </body>
 </html>
